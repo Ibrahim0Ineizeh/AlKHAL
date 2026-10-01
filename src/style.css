@@ -1,0 +1,783 @@
+:root {
+  font-family:'DM Sans',sans-serif;
+  color:#352820;
+  background:#f7f5f0;
+  font-synthesis:none;
+  text-rendering:optimizeLegibility;
+  -webkit-font-smoothing:antialiased;
+  font-weight:400;
+  --ink:#352820;
+  --muted:#796e64;
+  --rust:#a34b31;
+  --line:#ded8cc;
+  --serif:'Fraunces',Georgia,serif;
+  --arabic:'Noto Naskh Arabic',serif;
+}
+
+* {
+  box-sizing:border-box;
+}
+
+body {
+  margin:0;
+}
+
+button {
+  font:inherit;
+  -webkit-tap-highlight-color:transparent;
+}
+
+button:focus-visible,a:focus-visible {
+  outline:3px solid var(--rust);
+  outline-offset:5px;
+}
+
+button:disabled {
+  cursor:default;
+  opacity:.35;
+}
+
+button:not(:disabled) {
+  cursor:pointer;
+}
+
+[hidden] {
+  display:none!important;
+}
+
+svg {
+  width:24px;
+  height:24px;
+  flex-shrink:0;
+}
+
+h1,h2,p {
+  margin:0;
+}
+
+.page-shell {
+  max-width:1320px;
+  padding:0 64px;
+  margin:auto;
+}
+
+.skip-link {
+  position:absolute;
+  top:12px;
+  left:12px;
+  background:var(--ink);
+  color:white;
+  padding:12px 18px;
+  z-index:10;
+  transform:translateY(-200%);
+}
+
+.skip-link:focus {
+  transform:none;
+}
+
+.site-header {
+  min-height:120px;
+  border-bottom:1px solid var(--line);
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:20px;
+}
+
+.brand {
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  min-width:90px;
+}
+
+.brand-logo {
+  display:block;
+  width:112px;
+  height:auto;
+  mix-blend-mode:multiply;
+  clip-path:inset(0 0 1.3% 0);
+}
+
+.header-note {
+  display:flex;
+  align-items:center;
+  gap:12px;
+  font-size:0.875rem;
+  color:var(--muted);
+}
+
+.brand-star {
+  font-size:1.625rem;
+  line-height:1;
+  color:var(--rust);
+}
+
+.header-menu {
+  display:flex;
+  flex-direction:column;
+  align-items:end;
+  gap:3px;
+}
+
+.header-menu span:first-child {
+  font-family:var(--arabic);
+  font-size:1.375rem;
+}
+
+.header-menu span:last-child {
+  font-size:0.75rem;
+  letter-spacing:1.5px;
+}
+
+.page-heading {
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:37px 0 31px;
+  gap:20px;
+}
+
+h1 {
+  font-family:var(--serif);
+  font-size:4rem;
+  font-weight:500;
+  letter-spacing:-3px;
+  line-height:1.15;
+}
+
+h1>span {
+  color:var(--rust);
+}
+
+.page-heading p {
+  display:flex;
+  align-items:center;
+  gap:10px;
+  font-size:0.875rem;
+  color:var(--muted);
+}
+
+.page-heading p svg {
+  width:21px;
+  height:21px;
+}
+
+.coffee-grid {
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:28px;
+}
+
+.category-picker {
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+  margin-bottom:28px;
+}
+
+.category-button {
+  min-height:44px;
+  padding:10px 20px;
+  border:1px solid var(--line);
+  border-radius:24px;
+  background:transparent;
+  color:var(--muted);
+  font-size:0.875rem;
+  transition:background .2s,color .2s,border-color .2s;
+}
+
+.category-button:hover {
+  background:#ebe5d8;
+  color:var(--ink);
+}
+
+.category-button[aria-pressed=true] {
+  background:var(--ink);
+  color:#f7f5f0;
+  border-color:var(--ink);
+}
+
+.category-empty {
+  min-height:300px;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  gap:12px;
+  padding:32px;
+  text-align:center;
+  border:1px solid var(--line);
+  border-radius:16px;
+}
+
+.category-empty h2 {
+  font-family:var(--serif);
+  font-size:2rem;
+  font-weight:500;
+}
+
+.category-empty p {
+  color:var(--muted);
+  line-height:1.5;
+}
+
+.sr-only {
+  position:absolute;
+  width:1px;
+  height:1px;
+  padding:0;
+  margin:-1px;
+  overflow:hidden;
+  clip-path:inset(50%);
+  white-space:nowrap;
+  border:0;
+}
+
+.coffee-card {
+  --scene:#ebe5d8;
+  --ring:#d7c7a8;
+  --ring-fill:#e5dccb;
+  --detail:#efeadd;
+  --scene-ink:#6e604c;
+  border-radius:16px;
+  overflow:hidden;
+  border:1px solid #ded7c8;
+  background:var(--detail);
+  min-width:0;
+}
+
+.tone-clay {
+  --scene:#eddfd8;
+  --ring:#d8b6a4;
+  --ring-fill:#e7d3c8;
+  --detail:#f1e7e1;
+  --scene-ink:#775b4b;
+  border-color:#e1d0c7;
+}
+
+.card-scene {
+  background:var(--scene);
+  position:relative;
+}
+
+.scene-topline {
+  position:absolute;
+  z-index:2;
+  top:24px;
+  left:25px;
+  right:25px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  pointer-events:none;
+  color:var(--scene-ink);
+  font-size:0.75rem;
+  letter-spacing:1.3px;
+  font-weight:500;
+}
+
+.item-number {
+  color:var(--ink);
+  font-size:0.75rem;
+  margin-right:14px;
+  letter-spacing:1px;
+}
+
+.view-badge {
+  border:1px solid var(--ring);
+  padding:7px 9px;
+  border-radius:5px;
+  font-size:0.75rem;
+  letter-spacing:1px;
+}
+
+.model-stage {
+  height:350px;
+  position:relative;
+  padding-top:28px;
+}
+
+.stage-ring {
+  position:absolute;
+  width:250px;
+  height:250px;
+  left:50%;
+  top:54%;
+  transform:translate(-50%,-50%);
+  border-radius:50%;
+  border:1px solid var(--ring);
+  box-shadow:0 0 0 28px var(--ring-fill),0 0 0 29px var(--ring);
+}
+
+.model-stage model-viewer {
+  width:100%;
+  height:100%;
+  --progress-bar-height:0;
+  background:transparent;
+  position:relative;
+  z-index:1;
+  cursor:grab;
+}
+
+.model-stage model-viewer:active {
+  cursor:grabbing;
+}
+
+.loading-indicator {
+  position:absolute;
+  left:50%;
+  top:48%;
+  transform:translate(-50%,-50%);
+  white-space:nowrap;
+  padding:12px 18px;
+  background:#f7f5f0;
+  border-radius:24px;
+  font-size:0.875rem;
+  color:var(--muted);
+  display:flex;
+  align-items:center;
+  gap:12px;
+}
+
+.loading-indicator span {
+  width:12px;
+  height:12px;
+  border:1.5px solid var(--line);
+  border-top-color:var(--ink);
+  border-radius:50%;
+  animation:spin 1s linear infinite;
+}
+
+.viewer-tools {
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:0 25px 20px;
+  gap:12px;
+}
+
+.drag-hint {
+  display:flex;
+  align-items:center;
+  gap:8px;
+  font-size:0.75rem;
+  color:var(--scene-ink);
+}
+
+.drag-hint svg {
+  width:18px;
+  height:18px;
+}
+
+.viewer-buttons {
+  display:flex;
+  gap:8px;
+}
+
+.icon-button {
+  width:40px;
+  height:40px;
+  display:grid;
+  place-items:center;
+  border:1px solid var(--ring);
+  border-radius:50%;
+  background:transparent;
+  color:var(--ink);
+  transition:background .2s;
+}
+
+.icon-button:not(:disabled):hover {
+  background:#f7f5f0;
+}
+
+.icon-button svg {
+  width:17px;
+  height:17px;
+}
+
+.drink-details {
+  padding:23px 25px 18px;
+  border-top:1px solid var(--ring);
+}
+
+.drink-title {
+  display:flex;
+  flex-wrap:wrap;
+  align-items:baseline;
+  justify-content:space-between;
+  gap:15px;
+}
+
+.drink-title h2 {
+  font-family:var(--serif);
+  font-size:2.125rem;
+  letter-spacing:-1px;
+  font-weight:500;
+  line-height:1.25;
+}
+
+.arabic-name {
+  font-family:var(--arabic);
+  font-size:1.5625rem;
+  color:var(--scene-ink);
+  white-space:nowrap;
+}
+
+.drink-bottom {
+  display:flex;
+  flex-wrap:wrap;
+  align-items:center;
+  justify-content:space-between;
+  gap:16px;
+  margin-top:11px;
+}
+
+.drink-bottom p {
+  font-size:1rem;
+  line-height:1.5;
+  color:var(--scene-ink);
+}
+
+.price {
+  display:flex;
+  align-items:baseline;
+  gap:7px;
+  white-space:nowrap;
+}
+
+.price>span:first-child {
+  font-size:1.5625rem;
+  letter-spacing:-.8px;
+  font-weight:500;
+  font-variant-numeric:tabular-nums;
+}
+
+.price>span:last-child {
+  font-size:0.75rem;
+  color:var(--scene-ink);
+}
+
+.card-footnote {
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:10px;
+  border-top:1px solid var(--ring);
+  padding-top:13px;
+  margin-top:19px;
+  font-size:0.75rem;
+  line-height:1.5;
+  color:var(--scene-ink);
+}
+
+.card-footnote>span:last-child {
+  white-space:nowrap;
+  flex-shrink:0;
+}
+
+.menu-note {
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:12px;
+  padding:25px 0 28px;
+  color:var(--muted);
+  font-size:0.875rem;
+}
+
+.menu-note>span {
+  color:var(--rust);
+  font-size:1.4375rem;
+}
+
+.site-footer {
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:20px;
+  border-top:1px solid var(--line);
+  padding:20px 0 26px;
+  color:var(--muted);
+  font-size:0.75rem;
+}
+
+.footer-brand {
+  font-family:var(--arabic);
+  font-size:1.6875rem;
+  color:var(--ink);
+  line-height:1.3;
+}
+
+.model-fallback {
+  position:absolute;
+  inset:65px 20px 0;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  text-align:center;
+  z-index:3;
+  background:var(--scene);
+  border-radius:20px;
+}
+
+.model-fallback>span svg {
+  width:42px;
+  height:42px;
+  margin-bottom:18px;
+}
+
+.model-fallback p {
+  font-size:1rem;
+}
+
+.model-fallback .fallback-description {
+  font-size:0.875rem;
+  color:var(--muted);
+  margin-top:8px;
+}
+
+.model-fallback button {
+  margin-top:20px;
+  padding:10px 20px;
+  min-height:44px;
+  border:1px solid var(--ring);
+  border-radius:8px;
+  background:transparent;
+  color:var(--ink);
+}
+
+.noscript {
+  padding:40px;
+  text-align:center;
+}
+
+@keyframes spin {
+  to {
+    transform:rotate(360deg);
+  }
+}
+
+@media(min-width:1500px) {
+  .page-shell {
+    max-width:1390px;
+    padding:0 72px;
+  }
+  .site-header {
+    min-height:130px;
+  }
+  .page-heading {
+    padding:45px 0 37px;
+  }
+  .model-stage {
+    height:395px;
+  }
+}
+
+@media(max-width:1100px) {
+  .page-shell {
+    padding:0 36px;
+  }
+  .coffee-grid {
+    gap:22px;
+  }
+  .scene-topline {
+    left:20px;
+    right:20px;
+  }
+  .model-stage {
+    height:330px;
+  }
+  .stage-ring {
+    width:215px;
+    height:215px;
+    box-shadow:0 0 0 23px var(--ring-fill),0 0 0 24px var(--ring);
+  }
+  .viewer-tools {
+    padding-inline:20px;
+  }
+  .drink-details {
+    padding:20px;
+  }
+  .drink-title h2 {
+    font-size:1.875rem;
+  }
+  .arabic-name {
+    font-size:1.4375rem;
+  }
+  .drink-bottom p {
+    font-size:1rem;
+  }
+  .price>span:first-child {
+    font-size:1.4375rem;
+  }
+  .card-footnote {
+    font-size:0.75rem;
+    gap:6px;
+  }
+}
+
+@media(max-width:760px) {
+  .page-shell {
+    padding:0 22px;
+    max-width:570px;
+  }
+  .site-header {
+    min-height:107px;
+  }
+  .brand-logo {
+    width:100px;
+  }
+  .brand {
+    min-width:75px;
+  }
+  .header-note {
+    display:none;
+  }
+  .header-menu span:first-child {
+    font-size:1.3125rem;
+  }
+  .header-menu span:last-child {
+    font-size:0.75rem;
+  }
+  .page-heading {
+    padding:27px 0 23px;
+    align-items:center;
+    gap:16px;
+  }
+  h1 {
+    font-size:2.8125rem;
+    letter-spacing:-2px;
+  }
+  .page-heading p {
+    display:none;
+  }
+  .page-heading p svg {
+    width:20px;
+    height:20px;
+  }
+  .coffee-grid {
+    grid-template-columns:1fr;
+    gap:23px;
+  }
+  .category-picker {
+    gap:8px;
+    margin-bottom:23px;
+  }
+  .category-button {
+    padding-inline:16px;
+  }
+  .coffee-card {
+    border-radius:14px;
+  }
+  .model-stage {
+    height:300px;
+    padding-top:28px;
+  }
+  .stage-ring {
+    width:215px;
+    height:215px;
+  }
+  .scene-topline {
+    top:20px;
+  }
+  .viewer-tools {
+    padding:0 20px 16px;
+  }
+  .icon-button {
+    width:44px;
+    height:44px;
+  }
+  .drink-details {
+    padding:19px 20px 16px;
+  }
+  .drink-title h2 {
+    font-size:1.9375rem;
+  }
+  .arabic-name {
+    font-size:1.5625rem;
+  }
+  .drink-bottom {
+    margin-top:10px;
+  }
+  .drink-bottom p {
+    font-size:1rem;
+  }
+  .price>span:first-child {
+    font-size:1.5rem;
+  }
+  .card-footnote {
+    font-size:0.75rem;
+    margin-top:17px;
+    padding-top:12px;
+  }
+  .menu-note {
+    font-size:0.875rem;
+    line-height:1.6;
+    text-align:center;
+    gap:8px;
+    padding:23px 5px;
+  }
+  .menu-note>span {
+    font-size:1.3125rem;
+  }
+  .site-footer {
+    font-size:0.75rem;
+    flex-wrap:wrap;
+    gap:9px 16px;
+    padding:18px 0 24px;
+  }
+  .site-footer>span:last-child {
+    display:none;
+  }
+}
+
+@media(max-width:360px) {
+  .page-shell {
+    padding:0 16px;
+  }
+  .page-heading p {
+    max-width:102px;
+    font-size:0.75rem;
+  }
+  .page-heading p svg {
+    display:none;
+  }
+  h1 {
+    font-size:2.5625rem;
+  }
+  .model-stage {
+    height:275px;
+  }
+  .drink-details {
+    padding-inline:16px;
+  }
+  .drink-title h2 {
+    font-size:1.75rem;
+  }
+  .arabic-name {
+    font-size:1.4375rem;
+  }
+  .drink-bottom {
+    gap:8px;
+  }
+  .drink-bottom p {
+    font-size:0.75rem;
+  }
+  .price>span:first-child {
+    font-size:1.375rem;
+  }
+  .card-footnote {
+    font-size:0.75rem;
+  }
+}
+
+@media(prefers-reduced-motion:reduce) {
+  *,*::before,*::after {
+    animation:none!important;
+    transition:none!important;
+    scroll-behavior:auto!important;
+  }
+}
