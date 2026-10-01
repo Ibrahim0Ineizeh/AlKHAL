@@ -1,6 +1,5 @@
 import '@fontsource/dm-sans/latin-400.css';
 import '@fontsource/dm-sans/latin-500.css';
-import '@fontsource/dm-sans/latin-600.css';
 import '@fontsource/fraunces/latin-500.css';
 import '@fontsource/noto-naskh-arabic/arabic-500.css';
 import './style.css';
@@ -28,8 +27,6 @@ document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
       <div class="brand" aria-label="${escape(shop.name)}">
         <img class="brand-logo" src="${escape(shop.logo)}" alt="${escape(shop.name)} — Alkhal" width="556" height="459" />
       </div>
-      <div class="header-note"><span class="brand-star" aria-hidden="true">✳</span><span>A moment for coffee.</span></div>
-      <div class="header-menu"><span lang="ar" dir="rtl">القائمة</span><span>MENU</span></div>
     </header>
 
     <main id="coffee-menu">
@@ -45,7 +42,7 @@ document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
               <div class="scene-topline"><span><span class="item-number">${String(index + 1).padStart(2, '0')}</span> ${categories.find((category) => category.id === drink.category)!.sceneLabel}</span><span class="view-badge">360° VIEW</span></div>
               <div class="model-stage">
                 <div class="stage-ring" aria-hidden="true"></div>
-                <model-viewer src="${escape(drink.model)}" alt="${escape(drink.modelAlt)} — ${escape(drink.name)} cup preview"
+                <model-viewer alt="${escape(drink.modelAlt)} — ${escape(drink.name)} cup preview"
                   camera-controls touch-action="pan-y" disable-zoom disable-pan
                   camera-orbit="${index ? '-30' : '25'}deg 75deg 105%" field-of-view="30deg"
                   min-camera-orbit="auto 35deg auto" max-camera-orbit="auto 100deg auto"
@@ -92,8 +89,39 @@ categoryButtons.forEach((button) => {
     document.querySelector('#category-status')!.textContent = count
       ? `${category.name}: ${count} ${count === 1 ? 'drink' : 'drinks'}.`
       : `${category.name}: no drinks in this category yet.`;
+    loadVisibleModels();
   });
 });
+
+let modelViewerModule: Promise<unknown> | undefined;
+function loadModelViewer() {
+  return modelViewerModule ??= import('@google/model-viewer').catch((error) => {
+    modelViewerModule = undefined;
+    throw error;
+  });
+}
+
+const modelLoaders = new Map<HTMLElement, () => Promise<void>>();
+const preloadMargin = 100;
+function isNearViewport(card: HTMLElement) {
+  if (card.hidden) return false;
+  const bounds = card.getBoundingClientRect();
+  return bounds.width > 0 && bounds.height > 0
+    && bounds.bottom >= -preloadMargin && bounds.top <= window.innerHeight + preloadMargin
+    && bounds.right >= -preloadMargin && bounds.left <= window.innerWidth + preloadMargin;
+}
+
+function loadVisibleModels() {
+  modelLoaders.forEach((load, card) => {
+    if (isNearViewport(card)) void load();
+  });
+}
+
+const modelObserver = typeof IntersectionObserver === 'undefined' ? undefined : new IntersectionObserver((entries) => {
+  entries.forEach((entry) => {
+    if (entry.isIntersecting) void modelLoaders.get(entry.target as HTMLElement)?.();
+  });
+}, { rootMargin: `${preloadMargin}px` });
 
 document.querySelectorAll<HTMLElement>('.coffee-card').forEach((card, index) => {
   const drink = drinks[index];
@@ -104,6 +132,9 @@ document.querySelectorAll<HTMLElement>('.coffee-card').forEach((card, index) => 
   const loader = card.querySelector<HTMLElement>('.loading-indicator')!;
   const initialOrbit = viewer.getAttribute('camera-orbit')!;
   let loadTimer: ReturnType<typeof setTimeout>;
+  let modelSource = drink.model;
+  let requested = false;
+  let loadingModule = false;
 
   function showFallback() {
     clearTimeout(loadTimer);
@@ -135,18 +166,46 @@ document.querySelectorAll<HTMLElement>('.coffee-card').forEach((card, index) => 
     viewer.resetTurntableRotation(0);
   });
 
-  card.querySelector('.retry-model')!.addEventListener('click', async () => {
+  async function loadModel() {
+    if (requested || loadingModule || !isNearViewport(card)) return;
+    loadingModule = true;
+    loader.hidden = false;
     fallback.hidden = true;
     viewer.hidden = false;
-    startLoading();
     try {
-      await import('@google/model-viewer');
-      const retryUrl = new URL(drink.model, window.location.href);
-      retryUrl.searchParams.set('retry', String(Date.now()));
-      viewer.src = retryUrl.href;
-    } catch { showFallback(); }
+      await loadModelViewer();
+      // The customer may have scrolled away or changed categories while the library loaded.
+      if (!isNearViewport(card)) return;
+      requested = true;
+      modelObserver?.unobserve(card);
+      startLoading();
+      viewer.src = modelSource;
+    } catch {
+      if (!isNearViewport(card)) return;
+      requested = true;
+      modelObserver?.unobserve(card);
+      showFallback();
+    } finally {
+      loadingModule = false;
+    }
+  }
+
+  card.querySelector('.retry-model')!.addEventListener('click', () => {
+    const retryUrl = new URL(drink.model, window.location.href);
+    retryUrl.searchParams.set('retry', String(Date.now()));
+    modelSource = retryUrl.href;
+    requested = false;
+    modelObserver?.observe(card);
+    void loadModel();
   });
 
-  startLoading();
-  void import('@google/model-viewer').catch(showFallback);
+  modelLoaders.set(card, loadModel);
+  modelObserver?.observe(card);
 });
+
+if (!modelObserver) {
+  // Older browsers keep the same deferred behavior using viewport checks.
+  window.addEventListener('scroll', loadVisibleModels, { passive: true });
+  window.addEventListener('resize', loadVisibleModels);
+  loadVisibleModels();
+}

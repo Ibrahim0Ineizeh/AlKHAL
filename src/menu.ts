@@ -32,8 +32,7 @@ export interface Drink {
   modelNote: string;
 }
 
-// Only one supplied asset is a drink: the takeaway coffee cup.
-// Replace an item's model with its own imported .glb URL as assets become available.
+// Each drink can use its own imported .glb URL.
 const cup = {
   model: coffeeCup,
   modelAlt: 'An interactive 3D takeaway coffee cup with a lid',

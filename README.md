@@ -25,17 +25,17 @@ Edit `src/menu.ts`. It holds the shop name, categories, Arabic and English drink
 - The shop name is **الخال**. The supplied Alkhal logo is saved in `public/alkhal-logo.png`.
 - **JOD (Jordanian dinar) is the starting currency assumption.** Change `currency` and `locale` if a different dinar is intended.
 - **3.50 JOD for Latte and 2.00 JOD for Turkish coffee are sample prices**, not confirmed prices. Replace them and set `shop.isDemo` to `false` before using the menu with customers.
-- Both drinks currently use the supplied `models/CoffeCup.glb`. It is a generic takeaway cup; it does not depict a specific latte or traditional Turkish serving. Each card says it is a cup preview.
-- To use distinct models, add the new `.glb` files under `models`, import each with `?url`, and set the corresponding drink's `model`, `modelAlt`, and `modelNote`. Vite gives the model a versioned asset URL when building.
+- Latte uses `models/CoffeCup.glb`, a takeaway cup, and Turkish coffee uses `models/CupofCoffee.glb`, a separate coffee cup model. Each card identifies the model as a cup preview; the actual presentation may vary.
+- To change models, add the new `.glb` files under `models`, import each with `?url`, and set the corresponding drink's `model`, `modelAlt`, and `modelNote`. Vite gives the model a versioned asset URL when building.
 - The plant, robot, and snowman are preserved in `models/` and are not included in the website bundle.
 
-The Arabic font is bundled locally. Menu information loads independently of the 3D library. The viewers support horizontal touch dragging, vertical page scrolling, keyboard controls, reset, reduced-motion preferences, and a failure state that keeps names/prices visible. Cups stay still until the customer rotates them; there are no play/pause controls or automatic rotation.
+The fonts are bundled locally, with only the weights used by the design. Menu information loads independently of the 3D library. The shared 3D library and each model load only when a visible drink card comes within 100 pixels of the viewport. Hidden categories wait until selected, and offscreen models wait until the customer scrolls near them. Deferred cards do not start a failure timeout until their model is requested. The viewers support horizontal touch dragging, vertical page scrolling, keyboard controls, reset, reduced-motion preferences, and a failure state with retry that keeps names/prices visible. Cups stay still until the customer rotates them; there are no play/pause controls or automatic rotation.
 
 ## Deploy to Vercel
 
 The project includes `vercel.json` for a static Vite deployment. No environment variables or database are needed.
 
-1. Confirm the prices and replace the shared preview model if desired.
+1. Confirm the prices and replace the cup preview models if desired.
 2. Push the project to your Git provider and import it in Vercel, or run `npx vercel` in this folder and sign in.
 3. Use **Vite** as the framework, **npm run build** as the build command, and **dist** as the output directory. These are already set in `vercel.json`.
 4. Publish to production (with the CLI: `npx vercel --prod`).
